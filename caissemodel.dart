@@ -1,15 +1,11 @@
-//import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nankim_s/models/services.dart';
 
-
-
 List<AdminData> adminDataFromJson(String str) => List<AdminData>.from(json.decode(str).map((x)=> AdminData.fromJson(x)));
 String adminDataToJson(List<AdminData> data) => json.encode(List<dynamic>.from(data.map((x) => x.toMap())));
-
 
 class AdminData{
   String idAdm;
@@ -53,21 +49,9 @@ Future<List<AdminData>> fetchProducts() async {
   return adminDataFromJson(response.body);
 } 
 
-
-
-
-
-
-
-
-// _client = new HttpClient();
-// _client.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-//set badCertificateCallback(bool callback(X509Certificate cert, String host, int port));
-
-
 class ManageResult{
 
-  final String uri = "http://localhost/nankim_s_server/server.php";
+  final String uri = "put yout url";
 
   Future<List<AdminData>> fetchData() async {
     
@@ -100,8 +84,6 @@ class MainListView extends StatefulWidget{
 }
 
 class MainListViewState extends State<MainListView> {
-  // final String uri = "http://127.20.10.13/nankim_s_server/server.php";
-  // final ManageResult manageResult = ManageResult();
   List<AdminData> admindata;
 
   @override 
