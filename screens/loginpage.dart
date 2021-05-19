@@ -74,15 +74,6 @@ class LoginUserState extends State {
     String email = emailController.text;
     String password = passwordController.text;
 
-
-    // SERVER LOGIN API URL
-    // var url = "http://10.0.2.2/bulletinizer/api/authentication/login_user.php";
-    // var url = emUrl + "authentication/login_user.php";
-    // var url  = emUrl + "authentication/login_user.php";
-    // var url = "https://cslerocher.com/app/api/authentication/login_user.php";
-
-    // var url = emUrl + "bulletinizer/api/authentication/login.php";
-
     var url = emUrl + "authentication/login.php";
 
     final form = _formKey.currentState;
@@ -139,26 +130,6 @@ class LoginUserState extends State {
     }
   }
 
-  // void _onLoading() {
-  //   showDialog(
-  //     context: context, 
-  //     barrierDismissible: false,
-  //     builder: (BuildContext context){
-  //       return Dialog(
-  //         child: new Row(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: <Widget>[
-  //             new CircularProgressIndicator(),
-
-  //           ],
-  //         ),
-  //       );
-  //     }
-  //   );
-  //   new Future.delayed(new Duration(seconds: 1), () {
-  //     Navigator.pop(context);
-  //   });
-  // }
 
   @override 
   Widget build(BuildContext context){
@@ -322,28 +293,13 @@ class LoginUserState extends State {
                         height: 40.0,
                         color: Colors.transparent,
                         child: Container(
-                          // decoration: BoxDecoration(
-                          //   border: Border.all(
-                          //     color: Colors.white,
-                          //     style: BorderStyle.solid,
-                          //     width: 1.0,
-                          //   ),
-                          //   color: Colors.transparent,
-                          //   borderRadius: BorderRadius.circular(20.0)
-                          // ),
+                      
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
                               Center (
                                 child: Text("$Internetstatus"),)
-                              // Center(
-                              //   child: Text("S'INSCRIRE", 
-                              //   style: TextStyle( 
-                              //     fontFamily: 'Montser',
-                              //     fontWeight: FontWeight.bold,
-                              //     color: Colors.white,
-                              //   ),),
-                              // )
+                              
                             ],
                           ),
                         ),
