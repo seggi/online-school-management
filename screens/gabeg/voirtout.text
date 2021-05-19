@@ -1,0 +1,631 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
+
+
+class RapVoirTout extends StatefulWidget{
+  const  RapVoirTout({Key key}) : super(key: key);
+
+  @override 
+  _RapVoirTout createState() =>  _RapVoirTout();
+}
+
+class _RapVoirTout extends State<RapVoirTout> {
+  static const int sortName = 0;
+  static const int sortStatus = 1;
+  bool isAscending = true;
+  int sortType = sortName;
+  ModuleVoirTout _moduleVoirTout;
+  final ViewLivreCaisse _viewLivreCaisse = ViewLivreCaisse();
+
+  // List<AdminData> admindata;
+  // final _fetCaisseData = fetchProducts();
+  // AdminData _adminData = AdminData();
+
+  @override
+  Widget build(BuildContext context){
+    final double _width = MediaQuery.of(context).size.width;
+    final double _height = MediaQuery.of(context).size.height;
+    
+    return Scaffold(
+      body: Container(
+        width: _width,
+        height: _height,
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 52.0,
+                color: Colors.lightBlue.shade50,
+                child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                    Text("Entree: 30,000.0"),
+                    Text("Sortie: 10,000.0"),
+                    Text("Solde: 20,000.0")
+                ],
+                ),
+              ),
+               _getBodyWidget(),
+
+            ],
+          ),
+        ),
+    );
+
+  }
+
+  Widget _getBodyWidget(){
+    return Container(
+      child:FutureBuilder(
+        future: _viewLivreCaisse.getLivreCaisse() ,
+        builder: (context, snapshot){
+          if(snapshot.hasData){
+            return Container(
+              child: HorizontalDataTable(
+                leftHandSideColumnWidth: 100,
+                rightHandSideColumnWidth: 600,
+                isFixedHeader: true,
+                headerWidgets: _getTitleWidget(),
+                leftSideItemBuilder: _generateFirstColumnRow,
+                rightSideItemBuilder: _generateRightHandSideColumnRow,
+                itemCount: snapshot.data.length,//caisse.financeData.length,
+                rowSeparatorWidget: const Divider(
+                  color: Colors.black54,
+                  height: 1.0,
+                  thickness: 0.0,
+                ),
+                leftHandSideColBackgroundColor: Color(0xFFFFFFFF),
+                rightHandSideColBackgroundColor: Color(0xFFFFFFFF),
+              ),
+              height: MediaQuery.of(context).size.height / 1.47,
+            );
+          }
+          
+          return CircularProgressIndicator();
+        
+        }
+      )
+    );
+  }
+
+  List<Widget> _getTitleWidget(){
+    return [
+      FlatButton(
+        padding: EdgeInsets.all(0),
+        child: _getTitleItemWidget('Date'+(sortType==sortName?(isAscending?'↓':'↑'):''), 100),
+        onPressed: () {}
+      ),
+
+      FlatButton(
+        padding: EdgeInsets.all(0),
+        child: _getTitleItemWidget('libel'+(sortType==sortName?(isAscending?'↓':'↑'):''), 150),
+        onPressed: () {}
+      ),
+
+      _getTitleItemWidget('piece', 150),
+      _getTitleItemWidget('Entree', 100),
+      _getTitleItemWidget('Sortie', 100),
+      _getTitleItemWidget('Solde', 100),
+    ];
+  }
+
+  Widget _getTitleItemWidget(String label, double width){
+    return Container(
+      child: Text(label, style: TextStyle(fontWeight: FontWeight.bold),),
+      width: width,
+      height: 56,
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+    );
+  }
+
+  Widget _generateFirstColumnRow(BuildContext context, int index){
+    return Container(
+      child: FutureBuilder(
+        future: _viewLivreCaisse.getLivreCaisse(),
+        builder: (context, snapshot){
+          _moduleVoirTout = snapshot.data[index];
+          if(!snapshot.hasData){
+            return CircularProgressIndicator();
+          }
+          return Container(
+            child: Text(_moduleVoirTout.date),
+            width: 90,
+            height: 52,
+            padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+            alignment: Alignment.centerLeft,
+          );
+          
+        },
+      )
+    );
+  }
+   // BuildContext context, int index  ////BuildContext context, int index
+    Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+      return Container(
+         child: FutureBuilder(
+           future: _viewLivreCaisse.getLivreCaisse(),
+           builder: (context, snapshort){
+            _moduleVoirTout = snapshort.data[index];
+            if(snapshort.hasData){
+              return Row(
+                  children: <Widget>[
+                    Container(
+                      child: Text(_moduleVoirTout.libel,),
+                      width:  150,
+                      height: 52,
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      alignment: Alignment.center,
+                    ),
+
+                    Container(
+                      child: Text(_moduleVoirTout.piece,),
+                      width:  150,
+                      height: 52,
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      alignment: Alignment.center,
+                    ),
+                    Container(
+                      child: Text(_moduleVoirTout.debits,),
+                      width: 100,
+                      height: 52,
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      alignment: Alignment.center,
+                    ),
+                    Container(
+                      child: Text(_moduleVoirTout.credits,),
+                      width: 100,
+                      height: 52,
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      alignment: Alignment.center,
+                    ),
+                    Container(
+                      child: Text(_moduleVoirTout.balance),
+                      width: 100,
+                      height: 52,
+                      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                      alignment: Alignment.center,
+                    ),
+                  ],
+                      
+                );
+              }
+
+             return CircularProgressIndicator();
+           }
+           
+         )
+      );
+    }
+
+}
+
+
+// Fetch Caisse Data
+class ModuleVoirTout {
+  // This class combine incomming & outgoing money
+  String date;
+  String libel;
+  String piece;
+  String debits;
+  String credits;
+  String balance;
+  
+
+  ModuleVoirTout({this.date, this.libel, this.piece, 
+                  this.debits, this.credits, this.balance});
+
+  factory ModuleVoirTout.fromJson(Map<String, dynamic> json){
+    return ModuleVoirTout(
+      date: json['date'],
+      libel: json['libel'],
+      piece: json['piece'],
+      debits: json['debits'],
+      credits: json['credits'],
+      balance: json['balance'],
+    );
+  }
+
+   Map<String, dynamic> toMap() => {
+    'date': date,
+    'libel': libel,
+    'piece': piece,
+    'debits': debits,
+    'credits': credits,
+    'balance': balance,
+   };
+}
+
+List<ModuleVoirTout> moduleVoirToutFromJson(String str) =>
+                    List<ModuleVoirTout>.from(json.decode(str).map((x) => 
+                    ModuleVoirTout.fromJson(x)));
+
+
+class ViewLivreCaisse{
+  Future<List<ModuleVoirTout>> getLivreCaisse() async {
+    String url ="http://10.0.2.2/nankim_s_server/livrecaisse.php";
+    final response = await http.get(url);
+    return moduleVoirToutFromJson(response.body);
+  }
+
+}
+
+
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+
+
+
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class RapVoirTout extends StatefulWidget{
+  const  RapVoirTout({Key key}) : super(key: key);
+
+  @override 
+  _RapVoirTout createState() =>  _RapVoirTout();
+}
+
+class _RapVoirTout extends State<RapVoirTout> {
+  static const int sortName = 0;
+  static const int sortStatus = 1;
+  bool isAscending = true;
+  int sortType = sortName;
+  ModuleVoirTout _moduleVoirTout;
+  final ViewLivreCaisse _viewLivreCaisse = ViewLivreCaisse();
+  var dts = DTS();
+  int _rowPerPage = PaginatedDataTable.defaultRowsPerPage;
+
+  // List<AdminData> admindata;
+  // final _fetCaisseData = fetchProducts();
+  // AdminData _adminData = AdminData();
+
+  @override
+  Widget build(BuildContext context){
+    final double _width = MediaQuery.of(context).size.width;
+    final double _height = MediaQuery.of(context).size.height;
+    
+    return Scaffold(
+      body: Container(
+        width: _width,
+        height: _height,
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 52.0,
+                color: Colors.lightBlue.shade50,
+                child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                    Text("Entree: 30,000.0"),
+                    Text("Sortie: 10,000.0"),
+                    Text("Solde: 20,000.0")
+                ],
+                ),
+              ),
+              Container(
+                height: _height/1.47,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  dragStartBehavior: DragStartBehavior.down,
+                  child: PaginatedDataTable(
+                    header: Text("Test"),
+                    sortColumnIndex: 0,
+                    sortAscending: true,
+                    columns: [
+                      DataColumn(label: Text('Name'), numeric: true),
+                      DataColumn(label: Text('lastName'), numeric: true),
+                      DataColumn(label: Text('Age'), numeric: true),
+                      DataColumn(label: Text('Wieght'), numeric: true),
+                      DataColumn(label: Text('Sex'), numeric: true),
+                      DataColumn(label: Text('Shine Color'), numeric: true)
+                    ],
+                    source: dts,
+                    onRowsPerPageChanged: (r) {
+                      setState(() {
+                        _rowPerPage = r;
+                      });
+                    },
+                    rowsPerPage: _rowPerPage,
+
+
+                    //    [
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Seggi')),
+                    //     DataCell(Text('Marugira')),
+                    //     DataCell(Text('19')),
+                    //     DataCell(Text('65')),
+                    //     DataCell(Text('M')),
+                    //     DataCell(Text('Black')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Serge')),
+                    //     DataCell(Text('Marugira')),
+                    //     DataCell(Text('20')),
+                    //     DataCell(Text('70')),
+                    //     DataCell(Text('M')),
+                    //     DataCell(Text('Brown')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadia')),
+                    //     DataCell(Text('Khrishna')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('White')),
+                    //   ]),
+
+                    //   DataRow(cells: [
+                    //     DataCell(Text('Nadine')),
+                    //     DataCell(Text('Khroga')),
+                    //     DataCell(Text('18')),
+                    //     DataCell(Text('60')),
+                    //     DataCell(Text('F')),
+                    //     DataCell(Text('Yelow')),
+                    //   ])
+                    // ],
+                  )
+                )
+              )
+
+            ],
+          ),
+        ),
+    );
+  }
+}
+
+
+// Paginate Table source
+
+class DTS extends DataTableSource{
+  @override
+  DataRow getRow(int index){
+      return DataRow.byIndex(
+        index: index, cells: [
+          DataCell(Text('Nadia')),
+          DataCell(Text('Khrishna')),
+          DataCell(Text('18')),
+          DataCell(Text('60')),
+          DataCell(Text('F')),
+          DataCell(Text('White')),
+        ],
+    );
+  }
+
+  @override
+  bool get isRowCountApproximate => true;
+
+  @override
+  int get rowCount => 100;
+
+  @override
+  int get selectedRowCount => 0;
+
+  
+}
+
+
+// Fetch Caisse Data
+class ModuleVoirTout {
+  // This class combine incomming & outgoing money
+  String date;
+  String libel;
+  String piece;
+  String debits;
+  String credits;
+  String balance;
+  
+
+  ModuleVoirTout({this.date, this.libel, this.piece, 
+                  this.debits, this.credits, this.balance});
+
+  factory ModuleVoirTout.fromJson(Map<String, dynamic> json){
+    return ModuleVoirTout(
+      date: json['date'],
+      libel: json['libel'],
+      piece: json['piece'],
+      debits: json['debits'],
+      credits: json['credits'],
+      balance: json['balance'],
+    );
+  }
+
+   Map<String, dynamic> toMap() => {
+    'date': date,
+    'libel': libel,
+    'piece': piece,
+    'debits': debits,
+    'credits': credits,
+    'balance': balance,
+   };
+}
+
+List<ModuleVoirTout> moduleVoirToutFromJson(String str) =>
+                    List<ModuleVoirTout>.from(json.decode(str).map((x) => 
+                    ModuleVoirTout.fromJson(x)));
+
+
+class ViewLivreCaisse{
+  Future<List<ModuleVoirTout>> getLivreCaisse() async {
+    String url ="http://10.0.2.2/nankim_s_server/livrecaisse.php";
+    final response = await http.get(url);
+    return moduleVoirToutFromJson(response.body);
+  }
+
+}
+
+
+
+
+
+

@@ -1,0 +1,2748 @@
+
+
+import 'package:flutter/material.dart';
+
+class LivreCaisse extends StatefulWidget{
+  const LivreCaisse({Key key}) : super(key: key);
+
+  @override 
+  _LivreCaisse createState() => _LivreCaisse();
+
+}
+
+class _LivreCaisse extends State<LivreCaisse> {
+
+  @override 
+  Widget build(BuildContext context){
+     final double _height = MediaQuery.of(context).size.height;
+     final double _width = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Livre de caisse'),
+        ),
+      body: Container(
+        color: Colors.white54,
+        width: _width, //height:_height,
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth:_width),
+           child: DataTable(
+              columns: [ 
+                DataColumn(label: Icon(Icons.calendar_today)),
+                DataColumn(label: Text('Libellee')),
+                DataColumn(label: Text('Entree')),
+                DataColumn(label: Text('Sortie')),
+                DataColumn(label: Text('Solde')),
+              ],
+              rows: [
+                DataRow(cells:[
+                  DataCell(Container(width:25, child:Column(children: <Widget>[ Text('15'), Text('05')],))),
+                  DataCell(Text('Vente Carbirant')),
+                  DataCell(Text('1000')),
+                  DataCell(Text('50')),
+                  DataCell(Text('950')),
+
+                ])
+              ],
+            )
+          )
+        )
+      ),
+    );
+  }
+}
+
+
+mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+
+
+import 'package:flutter/material.dart';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
+
+
+class LivreCaisse extends StatefulWidget{
+  const LivreCaisse({Key key}) : super(key: key);
+
+  @override 
+  _LivreCaisse createState() => _LivreCaisse();
+
+}
+
+class _LivreCaisse extends State<LivreCaisse> {
+  static const int sortName = 0;
+  static const int sortStatus = 1;
+  bool isAscending = true;
+  int sortType = sortName;
+
+  @override 
+  void initState(){
+    user.initData(100);
+    super.initState();
+
+  }
+
+  @override 
+  Widget build(BuildContext context){
+    final double _width = MediaQuery.of(context).size.width;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Livre de caisse'),
+        ),
+      body: Container(
+        color: Colors.white54,
+        width: _width, //height:_height,
+        child: Padding(
+          padding: EdgeInsets.all(10.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth:_width),
+           child: _getBodyWidget(),
+
+          )
+        )
+      ),
+    );
+  }
+
+  Widget _getBodyWidget(){
+    return Container(
+      child: HorizontalDataTable(
+        leftHandSideColumnWidth: 100,
+        rightHandSideColumnWidth: 800,
+        isFixedHeader: true,
+        headerWidgets: _getTitleWidget(),
+        leftSideItemBuilder: _generateFirstColumnRow,
+        rightSideItemBuilder: _generateRightHandSideColumnRow,
+        itemCount: user.userInfo.length,
+        rowSeparatorWidget: const Divider(
+          color: Colors.black54,
+          height: 1.0,
+          thickness: 0.0,
+        ),
+        leftHandSideColBackgroundColor: Color(0xFF2A2A2A),
+        rightHandSideColBackgroundColor: Color(0xFFFFFFFF),
+      ),
+      height: MediaQuery.of(context).size.height,
+    );
+  }
+
+  List<Widget> _getTitleWidget(){
+    return [
+      FlatButton(
+        padding: EdgeInsets.all(0),
+        child: _getTitleItemWidget('Date'+(sortType==sortName?(isAscending?'↓':'↑'):''), 100),
+        onPressed: () {
+          sortType = sortName;
+          isAscending = !isAscending;
+          user.sortName(isAscending);
+          setState(() {});
+        }
+      ),
+
+      FlatButton(
+        padding: EdgeInsets.all(0),
+        child: _getTitleItemWidget('Date'+(sortType==sortName?(isAscending?'↓':'↑'):''), 100),
+        onPressed: () {
+          sortType = sortName;
+          isAscending = !isAscending;
+          user.sortName(isAscending);
+          setState(() {});
+        }
+      ),
+
+      _getTitleItemWidget('Designation', 200),
+      _getTitleItemWidget('Entree', 200),
+      _getTitleItemWidget('Sortie', 200),
+      _getTitleItemWidget('Solde', 200),
+    ];
+  }
+
+  Widget _getTitleItemWidget(String label, double width){
+    return Container(
+      child: Text(label, style: TextStyle(fontWeight: FontWeight.bold),),
+      width: width,
+      height: 56,
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+    );
+  }
+
+  Widget _generateFirstColumnRow(BuildContext context, int index){
+    return Container(
+      child: Text(user.userInfo[index].name),
+      width: 100,
+      height: 52,
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+    );
+  }
+
+   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Row(
+            children: <Widget>[
+              Icon(
+                  user.userInfo[index].status
+                      ? Icons.notifications_off
+                      : Icons.notifications_active,
+                  color: user.userInfo[index].status ? Colors.red : Colors.green),
+              Text(user.userInfo[index].status ? 'Disabled' : 'Active')
+            ],
+          ),
+          width: 100,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+        ),
+        Container(
+          child: Text(user.userInfo[index].phone),
+          width: 200,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+        ),
+        Container(
+          child: Text(user.userInfo[index].registerDate),
+          width: 100,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+        ),
+        Container(
+          child: Text(user.userInfo[index].terminationDate),
+          width: 200,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+        ),
+      ],
+    );
+  }
+}
+
+User user = User();
+
+class User  {
+  List<UserInfo> _userInfo = List<UserInfo>();
+
+  void initData(int size){
+    for (int i=0; i < size; i++){
+      _userInfo.add(UserInfo(
+        "User_$i", i % 3 == 0, '+001 9999 9999', '2019-01-01','N/A'
+      ));
+    }
+  }
+
+  List<UserInfo> get userInfo => _userInfo;
+
+  set userInfo(List<UserInfo> value) {
+    _userInfo = value;
+  }
+
+  void sortName(bool isAscending) {
+    _userInfo.sort((a, b) {
+      int aId = int.tryParse(a.name.replaceFirst('User_', ''));
+      int bId = int.tryParse(b.name.replaceFirst('User_', ''));
+      return (aId-bId) * (isAscending ? 1 : -1);
+    });
+  }
+
+  void sortStatus(bool isAscending) {
+    _userInfo.sort((a, b) {
+      if (a.status == b.status) {
+        int aId = int.tryParse(a.name.replaceFirst('User_', ''));
+        int bId = int.tryParse(b.name.replaceFirst('User_', ''));
+        return (aId-bId);
+      } else if (a.status) {
+        return isAscending ? 1 : -1;
+      } else {
+        return isAscending ? -1 : 1;
+      }
+    });
+  }
+
+}
+
+
+class UserInfo {
+  String name;
+  bool status;
+  String phone;
+  String registerDate;
+  String terminationDate;
+
+  UserInfo(this.name, this.status, this.phone, this.registerDate,
+      this.terminationDate);
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+Row(
+            children: <Widget>[
+              Container(
+                child: Text(caisse.financeData[index].id.toString(),),
+                width:  60,
+                height: 52,
+                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                alignment: Alignment.center,
+              ),
+
+              Container(
+                child: Text(caisse.financeData[index].description,),
+                width:  200,
+                height: 52,
+                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                alignment: Alignment.centerLeft,
+              ),
+              Container(
+                child: Text(caisse.financeData[index].entre,),
+                width: 100,
+                height: 52,
+                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                alignment: Alignment.center,
+              ),
+              Container(
+                child: Text(caisse.financeData[index].sortie,),
+                width: 100,
+                height: 52,
+                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                alignment: Alignment.center,
+              ),
+              Container(
+                child: Text(caisse.financeData[index].solde,),
+                width: 100,
+                height: 52,
+                padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+                alignment: Alignment.center,
+              ),
+            ],
+          );
+
+
+          lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+
+
+
+
+
+
+
+  import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:nankim_s/models/livre_caisse/modules.dart';
+import 'package:nankim_s/models/livre_caisse/views.dart';
+
+
+
+class RapVoirTout extends StatefulWidget{
+  const  RapVoirTout({Key key}) : super(key: key);
+
+  @override 
+  _RapVoirTout createState() =>  _RapVoirTout();
+}
+
+class _RapVoirTout extends State<RapVoirTout> {
+  static const int sortName = 0;
+  static const int sortStatus = 1;
+  bool isAscending = true;
+  int sortType = sortName;
+  List<ModuleVoirTout> _moduleVoirTout;
+  final ViewLivreCaisse _viewLivreCaisse = ViewLivreCaisse();
+
+
+  List<AdminData> admindata;
+
+  // @override 
+  // void initState(){
+  //   caisse.initData(100);
+  //   super.initState();
+  // }
+  
+  // @override
+  // void initState(){
+  //   fetchProducts().then((result) => 
+  //   admindata = result.toList());
+  //   super.initState();
+
+  // }
+
+  // _accessData(){
+  //   _viewLivreCaisse.getLivreCaisse().then((result) => 
+  //      setState(() {
+  //        _moduleVoirTout = result;
+  //      }));
+  // }
+
+  @override
+  void initState(){
+    caisse.initLivreCaisse();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context){
+    final double _width = MediaQuery.of(context).size.width;
+    final double _height = MediaQuery.of(context).size.height;
+    fetchProducts().then((data) => data.forEach((value) => print(value.nom)));
+    print("MADDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
+    return Scaffold(
+      body: Container(
+        width: _width,
+        height: _height,
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 52.0,
+                color: Colors.lightBlue.shade50,
+                child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                    Text("Entree: 30,000.0"),
+                    Text("Sortie: 10,000.0"),
+                    Text("Solde: 20,000.0")
+                ],
+                ),
+              ),
+               _getBodyWidget(),
+
+            ],
+          ),
+        ),
+    );
+
+  }
+
+  Widget _getBodyWidget(){
+    return Container(
+      child: HorizontalDataTable(
+        leftHandSideColumnWidth: 100,
+        rightHandSideColumnWidth: 600,
+        isFixedHeader: true,
+        headerWidgets: _getTitleWidget(),
+        leftSideItemBuilder: _generateFirstColumnRow,
+        rightSideItemBuilder: _generateRightHandSideColumnRow,
+        itemCount: caisse.financeData.length,
+        rowSeparatorWidget: const Divider(
+          color: Colors.black54,
+          height: 1.0,
+          thickness: 0.0,
+        ),
+        leftHandSideColBackgroundColor: Color(0xFFFFFFFF),
+        rightHandSideColBackgroundColor: Color(0xFFFFFFFF),
+      ),
+      height: MediaQuery.of(context).size.height / 1.47,
+    );
+  }
+
+  List<Widget> _getTitleWidget(){
+    return [
+      FlatButton(
+        padding: EdgeInsets.all(0),
+        child: _getTitleItemWidget('Date'+(sortType==sortName?(isAscending?'↓':'↑'):''), 100),
+        onPressed: () {}
+      ),
+
+      FlatButton(
+        padding: EdgeInsets.all(0),
+        child: _getTitleItemWidget('Id'+(sortType==sortName?(isAscending?'↓':'↑'):''), 50),
+        onPressed: () {}
+      ),
+
+      _getTitleItemWidget('Designation', 200),
+      _getTitleItemWidget('Entree', 100),
+      _getTitleItemWidget('Sortie', 100),
+      _getTitleItemWidget('Solde', 100),
+    ];
+  }
+
+  Widget _getTitleItemWidget(String label, double width){
+    return Container(
+      child: Text(label, style: TextStyle(fontWeight: FontWeight.bold),),
+      width: width,
+      height: 56,
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+    );
+  }
+
+  Widget _generateFirstColumnRow(BuildContext context, int index){
+    return Container(
+      child: Text(caisse.financeData[index].date),
+      width: 90,
+      height: 52,
+      padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+      alignment: Alignment.centerLeft,
+    );
+  }
+   // BuildContext context, int index
+   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
+    return Row(
+      children: <Widget>[
+        Container(
+          child: Text(caisse.financeData[index].id.toString(),),
+          width:  60,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.center,
+        ),
+
+        Container(
+          child: Text(caisse.financeData[index].description,),
+          width:  200,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.centerLeft,
+        ),
+        Container(
+          child: Text(caisse.financeData[index].entre,),
+          width: 100,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.center,
+        ),
+        Container(
+          child: Text(caisse.financeData[index].sortie,),
+          width: 100,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.center,
+        ),
+        Container(
+          child: Text(caisse.financeData[index].solde,),
+          width: 100,
+          height: 52,
+          padding: EdgeInsets.fromLTRB(5, 0, 0, 0),
+          alignment: Alignment.center,
+        ),
+      ],
+          
+    );
+  }
+}
+
+CaisseRepport caisse = CaisseRepport();
+
+class CaisseRepport  {
+
+  ModuleVoirTout _moduleVoirTout;
+  final ViewLivreCaisse _viewLivreCaisse = ViewLivreCaisse();
+
+  AdminData _adminData;
+
+  List<FinanceData> _financeData = List<FinanceData>();
+
+  // void initData(int size){
+  //   for (int i=0; i < size; i++){
+  //     _financeData.add(FinanceData(
+  //       "2020-05-12", i, 'Achar carbirant', '0','100', '100'
+  //     ));
+  //   }
+  // }
+
+  void initLivreCaisse(){
+    int size = 10;
+     for (int i=0; i < size; i++){
+      _financeData.add(FinanceData(
+        "2020-05-12", i, 'Achar carbirant', '0','100', '100'
+      ));
+
+    }
+    print("segHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH");
+
+    
+    
+
+    
+  }
+
+
+
+  
+
+
+  List<FinanceData> get financeData => _financeData;
+
+  // set financeData(List<FinanceData> value){
+  //   _financeData = value;
+  // }
+  
+}
+
+class FinanceData{
+  String date;
+  int id;
+  String description;
+  String entre;
+  String sortie;
+  String solde;
+
+  FinanceData(this.date, this.id, this.description, 
+            this.entre, this.sortie, this.solde);
+}
+
+
+
+
+List<AdminData> adminDataFromJson(String str) => List<AdminData>.from(json.decode(str).map((x)=> AdminData.fromJson(x)));
+String adminDataToJson(List<AdminData> data) => json.encode(List<dynamic>.from(data.map((x) => x.toMap())));
+
+
+class AdminData{
+  String idAdm;
+  String user;
+  String pword;
+  String nom;
+  String postnom;
+  String titre;
+  String status;
+
+  AdminData({this.idAdm, this.user, this.pword, this.nom,
+            this.postnom, this.titre, this.status});
+
+  factory AdminData.fromJson(Map<String, dynamic> json){
+    return AdminData(
+      idAdm: json['idAdm'],
+      user: json['user'],
+      pword: json['pword'],
+      nom: json['nom'],
+      postnom: json['postnom'],
+      titre: json['titre'],
+      status: json['status'],
+    );
+  }
+
+  Map<String, dynamic> toMap() => {
+      'idAdm': idAdm,
+      'user': user,
+      'pword': pword,
+      'nom': nom,
+      'postnom': postnom,
+      'titre': titre,
+      'status': status,
+  }; 
+}
+
+
+Future<List<AdminData>> fetchProducts() async {
+  String url ="http://10.0.2.2/nankim_s_server/server.php";
+  final  response =  await http.get(url);
+  return adminDataFromJson(response.body);
+} 
+
+
+
+
+
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import 'package:nankim_s/models/caissemodel.dart';
+import 'package:nankim_s/screens/finance/financehomepage.dart';
+import 'package:nankim_s/screens/homepage.dart';
+
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key key}) : super(key: key);
+
+  @override 
+  _LoginPage createState() => _LoginPage();
+
+}
+
+class _LoginPage extends State<LoginPage> {
+  bool visible = false;
+  
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Future userLogin() async {
+    // Showing CircularProgressIndicator.
+    setState(() {
+      visible = true;
+    });
+
+    // Getting value from Controller
+    String email = emailController.text;
+    String password = passwordController.text;
+
+    // SERVER LOGIN API URL
+    // var url = "http://10.0.2.2:8000/shule/api/super_user/account/login/";
+    var url = "http://10.42.0.1:8000/shule/api/super_user/account/login/";
+
+    // Store all data with Param Name.
+    // var data =  {'email': email, 'password': password};
+
+    // Starting Web API call.
+    var  response = await http.post(url, body: {
+      "email": email,
+      "password": password,
+      "fcm_token": "nankim_fcm_tokem"
+    });
+
+    // Getting Server response into variable.
+    final data = jsonDecode(response.body);
+    int value = data['value'];
+    String message = data['msg'];
+    String emailAPI = data['email'];
+    String usernameAPI = data['username'];
+    
+
+    // If the Response validation is_valid.
+    if( message == "You're logged in." ) {
+      // Hidding the CircularProgressIndicator.
+      setState(() {
+        visible = false;
+      });
+
+      // Navigate to Home Screen & Next Screen.
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => FinanceHome()));
+
+    }else {
+      // If Email or Password did not Matched.
+      // Hiding the CircularProgressIndicator.
+      setState((){
+        visible = false;
+      });
+
+      // Showing Alert Dialog with Response JSON Message.
+      showDialog(
+        context: context, 
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ]
+          );
+        }
+      );
+    }
+
+  }
+  @override 
+  Widget build(BuildContext context){
+    return Scaffold(
+      // resizeToAvoidBottomPadding: false,
+      body: SafeArea(
+        child: Container(
+          // height: double.infinity,
+          // width: double.infinity,
+          // decoration: BoxDecoration(
+          //   gradient: LinearGradient(  
+          //     begin: Alignment.topCenter,
+          //     end: Alignment.bottomCenter,
+          //     colors: [
+          //       Color(0xFF73AEF5),
+          //       Color(0xFF61A4F1),
+          //       Color(0xFF478DE0),
+          //       Color(0xFF398AE5),
+          //     ],
+          //     stops: [0.1, 0.4, 0.7, 0.9]
+          //   ),
+         
+            child: Center(
+              child: Form(
+                child: Padding(
+                  padding: EdgeInsets.all(25.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[ 
+
+                      // Container(
+                      //   padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+                      //   child: Text(
+                      //     'nanKim',
+                      //     style: TextStyle(
+                      //       fontSize: 60.0, 
+                      //       fontWeight: FontWeight.bold,
+                      //       color: Colors.white70,
+                      //     ),
+                      //   ),
+                      // ),
+
+                      // SizedBox(height: 60.0,),
+
+                      TextFormField(
+                        controller: emailController,
+                        autocorrect: true,
+                        cursorColor: Colors.white,
+                        decoration: new InputDecoration(labelText: "Email", 
+                          labelStyle: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54,
+                            )
+                        ),
+                        validator: (val) => val.isNotEmpty? null : "Le nom d'utilisateur ne doit pas rester vide.",
+                      ),
+
+                      SizedBox(height: 20.0,),
+
+                      TextFormField(
+                        controller: passwordController,
+                        autocorrect: true,
+                        obscureText: true,
+                        cursorColor: Colors.white,
+                        decoration: new InputDecoration(
+                          labelText:'**********',
+                          labelStyle: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white54
+                            )
+                          ),
+                        validator: (val) => val.isNotEmpty? null : "Le mot depasse ne doit pas rester vide.",
+                      ),
+                      SizedBox(height: 5.0,),
+
+                      Container(
+                        alignment: Alignment(1.0, 0.0),
+                        padding: EdgeInsets.only(top:15.0, left:20.0),
+                        child: InkWell(
+                          child: Text('Mot de passe perdu?', 
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat',
+                            decoration: TextDecoration.underline
+                          ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 40.0,),
+
+                      Container(
+                        height: 40.0,
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20.0),
+                          shadowColor: Colors.white,
+                          color: Colors.white,
+                          elevation: 7.0,
+                          child: GestureDetector(
+                            onTap: userLogin, 
+                            child: Center(
+                              child: Text(
+                                'CONNEXION',
+                                style: TextStyle(
+                                  color: Colors.black54, 
+                                  fontWeight: FontWeight.bold, 
+                                  fontFamily: 'Montserrat'),
+                              ),
+                            ),),
+                        ),
+                        ),
+
+                      // RaisedButton(
+                      //   textColor: Colors.white,
+                      //   color: Colors.blueAccent,
+                      //   child: Text('Login'),
+                      //   onPressed: userLogin,
+                      //   // onPressed: () {
+                      //   //   Navigator.push(
+                      //   //     context,
+                      //   //     MaterialPageRoute(
+                      //   //       builder: (context) => FinanceHome(),
+                      //   //     )
+                      //   //   );
+                      //   // },
+                      // ),
+                      // Visibility( 
+                      //   visible: visible,
+                      //   child: Container(
+                      //     margin: EdgeInsets.only(bottom: 30),
+                      //     child: CircularProgressIndicator()
+                      //   ),
+                      // )
+                    ],
+                  )
+                )
+              ),
+            )
+
+          ),
+        ),
+    );
+  }
+}
+
+
+
+
+Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[ 
+                      Container( 
+                        alignment: Alignment.centerLeft,
+                        height: 60.0,
+                        child: TextFormField(
+                          controller: emailController,
+                          autocorrect: true,
+                          cursorColor: Colors.white,
+                          keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(color: Colors.white),
+                          decoration: new InputDecoration(labelText: "Email", 
+                            prefixIcon: Icon(
+                              Icons.person,
+                              color: Colors.white,
+                            ),
+                            labelStyle: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white54,
+                              )
+                          ),
+                          validator: (val) => val.isNotEmpty? null : "Le nom d'utilisateur ne doit pas rester vide.",
+                        ),
+                      )
+                    ],
+                  ),
+
+                  SizedBox(height: 30.0,),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[ 
+                      Container( 
+                        alignment: Alignment.centerLeft,
+                        height: 60.0,
+                        child: TextFormField(
+                          controller: emailController,
+                          autocorrect: true,
+                          cursorColor: Colors.white,
+                          obscureText: true,
+                          keyboardType: TextInputType.emailAddress,
+                          style: TextStyle(color: Colors.white),
+                          decoration: new InputDecoration(
+                            labelText: "*********", 
+                            prefixIcon: Icon(
+                              Icons.lock,
+                              color: Colors.white,
+                            ),
+                            labelStyle: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white54,
+                              )
+                          ),
+                          validator: (val) => val.isNotEmpty? null : "Le mot depasse ne doit pas rester vide.",
+                        ),
+                      ), 
+
+                      SizedBox(height: 5.0),
+
+                      Container(
+                        alignment: Alignment(1.0, 0.0),
+                        padding: EdgeInsets.only(top:15.0, left:20.0),
+                        child: InkWell(
+                          child: Text('Mot de passe perdu?', 
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Montserrat',
+                            decoration: TextDecoration.underline
+                          ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 40.0),
+
+                      Container(
+                        height: 40.0,
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20.0),
+                          shadowColor: Colors.white,
+                          color: Colors.white,
+                          elevation: 7.0,
+                          child: GestureDetector(
+                            onTap: userLogin, 
+                            child: Center(
+                              child: Text(
+                                'CONNEXION',
+                                style: TextStyle(
+                                  color: Colors.black54, 
+                                  fontWeight: FontWeight.bold, 
+                                  fontFamily: 'OpenSans',
+                                  letterSpacing: 1.5,
+                                  fontSize: 18.0,
+                                ),
+                              ),
+                            ),),
+                          ),
+                        ),
+
+
+import 'dart:ffi';
+
+import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
+import 'package:nankim_s/models/caissemodel.dart';
+import 'package:nankim_s/screens/finance/financehomepage.dart';
+import 'package:nankim_s/screens/homepage.dart';
+
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key key}) : super(key: key);
+
+  @override 
+  _LoginPage createState() => _LoginPage();
+
+}
+
+class _LoginPage extends State<LoginPage> {
+  bool visible = false;
+  
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  Future userLogin() async {
+    // Showing CircularProgressIndicator.
+    setState(() {
+      visible = true;
+    });
+
+    // Getting value from Controller
+    String email = emailController.text;
+    String password = passwordController.text;
+
+    // SERVER LOGIN API URL
+    // var url = "http://10.0.2.2:8000/shule/api/super_user/account/login/";
+    var url = "http://10.42.0.1:8000/shule/api/super_user/account/login/";
+
+    // Store all data with Param Name.
+    // var data =  {'email': email, 'password': password};
+
+    // Starting Web API call.
+    var  response = await http.post(url, body: {
+      "email": email,
+      "password": password,
+      "fcm_token": "nankim_fcm_tokem"
+    });
+
+    // Getting Server response into variable.
+    final data = jsonDecode(response.body);
+    int value = data['value'];
+    String message = data['msg'];
+    String emailAPI = data['email'];
+    String usernameAPI = data['username'];
+    
+
+    // If the Response validation is_valid.
+    if( message == "You're logged in." ) {
+      // Hidding the CircularProgressIndicator.
+      setState(() {
+        visible = false;
+      });
+
+      // Navigate to Home Screen & Next Screen.
+      Navigator.push(
+        context, 
+        MaterialPageRoute(builder: (context) => FinanceHome()));
+
+    }else {
+      // If Email or Password did not Matched.
+      // Hiding the CircularProgressIndicator.
+      setState((){
+        visible = false;
+      });
+
+      // Showing Alert Dialog with Response JSON Message.
+      showDialog(
+        context: context, 
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: new Text(message),
+            actions: <Widget>[
+              FlatButton(
+                child: new Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ]
+          );
+        }
+      );
+    }
+
+  }
+  @override 
+  Widget build(BuildContext context){
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          Container(
+            height: double.infinity,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(  
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF73AEF5),
+                  Color(0xFF61A4F1),
+                  Color(0xFF478DE0),
+                  Color(0xFF398AE5),
+                ],
+                stops: [0.1, 0.4, 0.7, 0.9]
+              ),
+            )
+          ),
+
+          Container(
+            height: double.infinity,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              padding: EdgeInsets.symmetric( 
+                horizontal: 40.0,
+                vertical: 120.0,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'nanKim',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'OpenSans',
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 30.0),
+                ]
+              )
+            )
+          ), 
+ 
+          Container( 
+            alignment: Alignment.centerLeft,
+            height: 60.0,
+            child: TextFormField(
+              controller: emailController,
+              autocorrect: true,
+              cursorColor: Colors.white,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(color: Colors.white),
+              decoration: new InputDecoration(labelText: "Email", 
+                prefixIcon: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
+                labelStyle: TextStyle(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white54,
+                  )
+                 ),
+                  validator: (val) => val.isNotEmpty? null : "Le nom d'utilisateur ne doit pas rester vide.",
+                ),
+              )
+            ],
+          ),
+
+          // SizedBox(height: 30.0,),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[ 
+              Container( 
+                alignment: Alignment.centerLeft,
+                height: 60.0,
+                child: TextFormField(
+                  controller: emailController,
+                  autocorrect: true,
+                  cursorColor: Colors.white,
+                  obscureText: true,
+                  keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(color: Colors.white),
+                  decoration: new InputDecoration(
+                    labelText: "*********", 
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Colors.white,
+                    ),
+                    labelStyle: TextStyle(
+                      fontFamily: 'Montserrat',
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white54,
+                      )
+                  ),
+                  validator: (val) => val.isNotEmpty? null : "Le mot depasse ne doit pas rester vide.",
+                ),
+              ), 
+
+              SizedBox(height: 5.0),
+
+              Container(
+                alignment: Alignment(1.0, 0.0),
+                padding: EdgeInsets.only(top:15.0, left:20.0),
+                child: InkWell(
+                  child: Text('Mot de passe perdu?', 
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Montserrat',
+                    decoration: TextDecoration.underline
+                  ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 40.0),
+
+              Container(
+                height: 40.0,
+                child: Material(
+                  borderRadius: BorderRadius.circular(20.0),
+                  shadowColor: Colors.white,
+                  color: Colors.white,
+                  elevation: 7.0,
+                  child: GestureDetector(
+                    onTap: userLogin, 
+                    child: Center(
+                      child: Text(
+                        'CONNEXION',
+                        style: TextStyle(
+                          color: Colors.black54, 
+                          fontWeight: FontWeight.bold, 
+                          fontFamily: 'OpenSans',
+                          letterSpacing: 1.5,
+                          fontSize: 18.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ]
+          )
+        ]
+      )
+    );
+  }
+}
+                
+              
+
+          //         Center(
+          //           child: Form(
+          //             child: Padding(
+          //               padding: EdgeInsets.all(25.0),
+          //               child: Column(
+          //                 mainAxisAlignment: MainAxisAlignment.center,
+          //                 crossAxisAlignment: CrossAxisAlignment.center,
+          //                 children: <Widget>[ 
+          //                     Column(
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: <Widget>[ 
+          //             Container( 
+          //               alignment: Alignment.centerLeft,
+          //               height: 60.0,
+          //               child: TextFormField(
+          //                 controller: emailController,
+          //                 autocorrect: true,
+          //                 cursorColor: Colors.white,
+          //                 keyboardType: TextInputType.emailAddress,
+          //                 style: TextStyle(color: Colors.white),
+          //                 decoration: new InputDecoration(labelText: "Email", 
+          //                   prefixIcon: Icon(
+          //                     Icons.person,
+          //                     color: Colors.white,
+          //                   ),
+          //                   labelStyle: TextStyle(
+          //                     fontFamily: 'Montserrat',
+          //                     fontWeight: FontWeight.bold,
+          //                     color: Colors.white54,
+          //                     )
+          //                 ),
+          //                 validator: (val) => val.isNotEmpty? null : "Le nom d'utilisateur ne doit pas rester vide.",
+          //               ),
+          //             )
+          //           ],
+          //         ),
+
+          //         SizedBox(height: 30.0,),
+
+          //         Column(
+          //           crossAxisAlignment: CrossAxisAlignment.start,
+          //           children: <Widget>[ 
+          //             Container( 
+          //               alignment: Alignment.centerLeft,
+          //               height: 60.0,
+          //               child: TextFormField(
+          //                 controller: emailController,
+          //                 autocorrect: true,
+          //                 cursorColor: Colors.white,
+          //                 obscureText: true,
+          //                 keyboardType: TextInputType.emailAddress,
+          //                 style: TextStyle(color: Colors.white),
+          //                 decoration: new InputDecoration(
+          //                   labelText: "*********", 
+          //                   prefixIcon: Icon(
+          //                     Icons.lock,
+          //                     color: Colors.white,
+          //                   ),
+          //                   labelStyle: TextStyle(
+          //                     fontFamily: 'Montserrat',
+          //                     fontWeight: FontWeight.bold,
+          //                     color: Colors.white54,
+          //                     )
+          //                 ),
+          //                 validator: (val) => val.isNotEmpty? null : "Le mot depasse ne doit pas rester vide.",
+          //               ),
+          //             ), 
+
+          //             SizedBox(height: 5.0),
+
+          //             Container(
+          //               alignment: Alignment(1.0, 0.0),
+          //               padding: EdgeInsets.only(top:15.0, left:20.0),
+          //               child: InkWell(
+          //                 child: Text('Mot de passe perdu?', 
+          //                 style: TextStyle(
+          //                   color: Colors.white,
+          //                   fontWeight: FontWeight.bold,
+          //                   fontFamily: 'Montserrat',
+          //                   decoration: TextDecoration.underline
+          //                 ),
+          //                 ),
+          //               ),
+          //             ),
+
+          //             SizedBox(height: 40.0),
+
+          //             Container(
+          //               height: 40.0,
+          //               child: Material(
+          //                 borderRadius: BorderRadius.circular(20.0),
+          //                 shadowColor: Colors.white,
+          //                 color: Colors.white,
+          //                 elevation: 7.0,
+          //                 child: GestureDetector(
+          //                   onTap: userLogin, 
+          //                   child: Center(
+          //                     child: Text(
+          //                       'CONNEXION',
+          //                       style: TextStyle(
+          //                         color: Colors.black54, 
+          //                         fontWeight: FontWeight.bold, 
+          //                         fontFamily: 'OpenSans',
+          //                         letterSpacing: 1.5,
+          //                         fontSize: 18.0,
+          //                       ),
+          //                     ),
+          //                   ),),
+          //                 ),
+          //               ),
+          //             ]
+          //           )
+          //         ],
+          //       )
+          //     ),
+          //   ),
+          // )
+
+       
+
+
+            // child: Center(
+            //   child: Form(
+            //     child: Padding(
+            //       padding: EdgeInsets.all(25.0),
+            //       child: Column(
+            //         mainAxisAlignment: MainAxisAlignment.center,
+            //         crossAxisAlignment: CrossAxisAlignment.center,
+            //         children: <Widget>[ 
+
+            //           // Container(
+            //           //   padding: EdgeInsets.fromLTRB(15.0, 110.0, 0.0, 0.0),
+            //           //   child: Text(
+            //           //     'nanKim',
+            //           //     style: TextStyle(
+            //           //       fontSize: 60.0, 
+            //           //       fontWeight: FontWeight.bold,
+            //           //       color: Colors.white70,
+            //           //     ),
+            //           //   ),
+            //           // ),
+
+            //           // SizedBox(height: 60.0,),
+
+            //           TextFormField(
+            //             controller: emailController,
+            //             autocorrect: true,
+            //             cursorColor: Colors.white,
+            //             decoration: new InputDecoration(labelText: "Email", 
+            //               labelStyle: TextStyle(
+            //                 fontFamily: 'Montserrat',
+            //                 fontWeight: FontWeight.bold,
+            //                 color: Colors.white54,
+            //                 )
+            //             ),
+            //             validator: (val) => val.isNotEmpty? null : "Le nom d'utilisateur ne doit pas rester vide.",
+            //           ),
+
+            //           SizedBox(height: 20.0,),
+
+            //           TextFormField(
+            //             controller: passwordController,
+            //             autocorrect: true,
+            //             obscureText: true,
+            //             cursorColor: Colors.white,
+            //             decoration: new InputDecoration(
+            //               labelText:'**********',
+            //               labelStyle: TextStyle(
+            //                 fontFamily: 'Montserrat',
+            //                 fontWeight: FontWeight.bold,
+            //                 color: Colors.white54
+            //                 )
+            //               ),
+            //             validator: (val) => val.isNotEmpty? null : "Le mot depasse ne doit pas rester vide.",
+            //           ),
+            //           SizedBox(height: 5.0,),
+
+            //           Container(
+            //             alignment: Alignment(1.0, 0.0),
+            //             padding: EdgeInsets.only(top:15.0, left:20.0),
+            //             child: InkWell(
+            //               child: Text('Mot de passe perdu?', 
+            //               style: TextStyle(
+            //                 color: Colors.red,
+            //                 fontWeight: FontWeight.bold,
+            //                 fontFamily: 'Montserrat',
+            //                 decoration: TextDecoration.underline
+            //               ),
+            //               ),
+            //             ),
+            //           ),
+
+            //           SizedBox(height: 40.0,),
+
+            //           Container(
+            //             height: 40.0,
+            //             child: Material(
+            //               borderRadius: BorderRadius.circular(20.0),
+            //               shadowColor: Colors.white,
+            //               color: Colors.white,
+            //               elevation: 7.0,
+            //               child: GestureDetector(
+            //                 onTap: userLogin, 
+            //                 child: Center(
+            //                   child: Text(
+            //                     'CONNEXION',
+            //                     style: TextStyle(
+            //                       color: Colors.black54, 
+            //                       fontWeight: FontWeight.bold, 
+            //                       fontFamily: 'Montserrat'),
+            //                   ),
+            //                 ),),
+            //             ),
+            //             ),
+
+            //           // RaisedButton(
+            //           //   textColor: Colors.white,
+            //           //   color: Colors.blueAccent,
+            //           //   child: Text('Login'),
+            //           //   onPressed: userLogin,
+            //           //   // onPressed: () {
+            //           //   //   Navigator.push(
+            //           //   //     context,
+            //           //   //     MaterialPageRoute(
+            //           //   //       builder: (context) => FinanceHome(),
+            //           //   //     )
+            //           //   //   );
+            //           //   // },
+            //           // ),
+            //           // Visibility( 
+            //           //   visible: visible,
+            //           //   child: Container(
+            //           //     margin: EdgeInsets.only(bottom: 30),
+            //           //     child: CircularProgressIndicator()
+            //           //   ),
+            //           // )
+            //         ],
+            //       )
+            //     )
+            //   ),
+            // )
+
+          // ),
+        // ]
+      // )
+    // );
+//   }
+// }
+
+
+
+
+// SizedBox(height: 30.0,),
+          // Column(
+          //   crossAxisAlignment: CrossAxisAlignment.start,
+          //   children: <Widget>[ 
+          //     Container( 
+          //       alignment: Alignment.centerLeft,
+          //       height: 60.0,
+          //       child: TextFormField(
+          //         controller: emailController,
+          //         autocorrect: true,
+          //         cursorColor: Colors.white,
+          //         obscureText: true,
+          //         keyboardType: TextInputType.emailAddress,
+          //         style: TextStyle(color: Colors.white),
+          //         decoration: new InputDecoration(
+          //           labelText: "*********", 
+          //           prefixIcon: Icon(
+          //             Icons.lock,
+          //             color: Colors.white,
+          //           ),
+          //           labelStyle: TextStyle(
+          //             fontFamily: 'Montserrat',
+          //             fontWeight: FontWeight.bold,
+          //             color: Colors.white54,
+          //             )
+          //         ),
+          //         validator: (val) => val.isNotEmpty? null : "Le mot depasse ne doit pas rester vide.",
+          //       ),
+          //     ), 
+
+          //     SizedBox(height: 5.0),
+
+          //     Container(
+          //       alignment: Alignment(1.0, 0.0),
+          //       padding: EdgeInsets.only(top:15.0, left:20.0),
+          //       child: InkWell(
+          //         child: Text('Mot de passe perdu?', 
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontWeight: FontWeight.bold,
+          //           fontFamily: 'Montserrat',
+          //           decoration: TextDecoration.underline
+          //         ),
+          //         ),
+          //       ),
+          //     ),
+
+          //     SizedBox(height: 40.0),
+
+          //     Container(
+          //       height: 40.0,
+          //       child: Material(
+          //         borderRadius: BorderRadius.circular(20.0),
+          //         shadowColor: Colors.white,
+          //         color: Colors.white,
+          //         elevation: 7.0,
+          //         child: GestureDetector(
+          //           onTap: userLogin, 
+          //           child: Center(
+          //             child: Text(
+          //               'CONNEXION',
+          //               style: TextStyle(
+          //                 color: Colors.black54, 
+          //                 fontWeight: FontWeight.bold, 
+          //                 fontFamily: 'OpenSans',
+          //                 letterSpacing: 1.5,
+          //                 fontSize: 18.0,
+          //               ),
+          //             ),
+          //           ),
+          //         ),
+          //       ),
+          //     ),
+            // ]
+          // )
+
+
+
+
+
+
+
+========================================================
+
+
+
+//  if (snapshot.hasData) {
+//                   return  ListView.builder(
+//                     scrollDirection: Axis.vertical,
+//                     itemBuilder: (BuildContext context, index){
+//                       _voir = snapshot.data[index];
+//                       if (_voir.studentpayment != null){
+//                         return  Container(
+//                           height: 170.0,
+//                           child:  Card(
+//                             elevation: 1.0,
+//                             color: Colors.white,
+//                               child: Column (
+//                               mainAxisAlignment: MainAxisAlignment.center,
+//                               children: <Widget>[
+//                                 Container (
+//                                   height: 60.0,
+//                                   padding: EdgeInsets.all(0.0),
+//                                   margin: EdgeInsets.only(bottom: 20.0),
+//                                   child: ListTile(
+//                                     title: Text("Paiement", 
+//                                       style: TextStyle(
+//                                         color: Colors.blue, 
+//                                       ),
+//                                       ),
+//                                     subtitle: Text("Paiement total des élèves"),
+//                                     trailing: Text(
+//                                       '12-20-2020',
+//                                       style: TextStyle(
+//                                         color: Colors.red,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+
+//                               Container(
+//                                 margin: EdgeInsets.only(bottom: 20.0),
+//                                 child:  Text(
+//                                   _voir.studentpayment, 
+//                                   textAlign: TextAlign.center,
+//                                   style: TextStyle(
+//                                     fontWeight: FontWeight.w100,
+//                                     fontSize: 40.0,
+//                                     color: Colors.black38,
+//                                     ),
+//                                 ),
+//                               )
+//                               ],
+//                             )
+//                           ),
+//                         );
+//                       }
+
+//                       return Container(
+//                           height: 170.0,
+//                           child:  Card(
+//                             elevation: 1.0,
+//                             color: Colors.white,
+//                               child: Column (
+//                               mainAxisAlignment: MainAxisAlignment.center,
+//                               children: <Widget>[
+//                                 Container (
+//                                   height: 60.0,
+//                                   padding: EdgeInsets.all(0.0),
+//                                   margin: EdgeInsets.only(bottom: 20.0),
+//                                   child: ListTile(
+//                                     title: Text("Paiement", 
+//                                       style: TextStyle(
+//                                         color: Colors.blue, 
+//                                       ),
+//                                       ),
+//                                     subtitle: Text("Paiement total des élèves"),
+//                                     trailing: Text(
+//                                       '12-20-2020',
+//                                       style: TextStyle(
+//                                         color: Colors.red,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+
+//                               Container(
+//                                 margin: EdgeInsets.only(bottom: 20.0),
+//                                 child:  Text(
+//                                   _voir.studentpayment, 
+//                                   textAlign: TextAlign.center,
+//                                   style: TextStyle(
+//                                     fontWeight: FontWeight.w100,
+//                                     fontSize: 40.0,
+//                                     color: Colors.black38,
+//                                     ),
+//                                 ),
+//                               )
+//                               ],
+//                             )
+//                           ),
+//                         );
+//                       }
+//                     );
+//                   }
+
+
+
+
+// children: <Widget>[
+                  
+//                     Container(
+//                       // padding: EdgeInsets.only(bottom: 20.0),
+//                       // margin: EdgeInsets.only(top: 0.0),
+//                       height: 170.0,
+//                       child:  Card(
+//                         elevation: 1.0,
+//                         color: Colors.white,
+//                           child: Column (
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: <Widget>[
+//                             Container (
+//                               height: 60.0,
+//                               padding: EdgeInsets.all(0.0),
+//                               margin: EdgeInsets.only(bottom: 20.0),
+//                               child: ListTile(
+//                                 title: Text("Dépenses", 
+//                                   style: TextStyle(
+//                                     color: Colors.blue, 
+//                                   ),
+//                                   ),
+//                                 subtitle: Text("Le total dépenses du jour"),
+//                                 trailing: Text(
+//                                   "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+//                                   style: TextStyle(
+//                                     color: Colors.red,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+
+//                           Container(
+//                             margin: EdgeInsets.only(bottom: 20.0),
+//                             child:  Text(
+//                               '285', 
+//                               textAlign: TextAlign.center,
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.w100,
+//                                 fontSize: 40.0,
+//                                 color: Colors.black38,
+//                                 ),
+//                             ),
+//                           )
+//                           ],
+//                         )
+//                       ),
+//                     ),
+
+//                   Container(
+//                       // padding: EdgeInsets.only(bottom: 20.0),
+//                       // margin: EdgeInsets.only(top: 0.0),
+//                       height: 170.0,
+//                       child:  Card(
+//                         elevation: 1.0,
+//                         color: Colors.white,
+//                           child: Column (
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: <Widget>[
+//                             Container (
+//                               height: 60.0,
+//                               padding: EdgeInsets.all(0.0),
+//                               margin: EdgeInsets.only(bottom: 20.0),
+//                               child: ListTile(
+//                                 title: Text("Ventes", 
+//                                   style: TextStyle(
+//                                     color: Colors.blue, 
+//                                   ),
+//                                   ),
+//                                 subtitle: Text("Ventes du jour"),
+//                                 trailing: Text(
+//                                   "12-20-2020",
+//                                   style: TextStyle(
+//                                     color: Colors.red,
+//                                   ),
+//                                 ),
+//                               ),
+//                             ),
+
+//                           Container(
+//                             margin: EdgeInsets.only(bottom: 20.0),
+//                             child:  Text(
+//                               '285', 
+//                               textAlign: TextAlign.center,
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.w100,
+//                                 fontSize: 40.0,
+//                                 color: Colors.black38,
+//                                 ),
+//                             ),
+//                           )
+//                           ],
+//                         )
+//                       ),
+//                     )
+//                   ],
+
+
+
+
+// ========------------------------------------------------------\\
+
+
+// Widget studentPayment() {
+//     return FutureBuilder(
+//       future: getDailyStudentPayment(),
+//       builder: (context, snapshot) {
+//         if (snapshot.hasData) {
+//           return ListView.builder(
+//             // itemCount: snapshot.data.length,
+//             itemCount: 1,
+//             shrinkWrap: true,
+//             itemBuilder: (BuildContext context, index) {
+//                 _voir = snapshot.data[index];
+//                 if(_voir.studentpayment != 'null'){
+//                   return Container(
+//                     height: 170.0,
+//                     child:  Card(
+//                       elevation: 1.0,
+//                       color: Colors.white,
+//                         child: Column (
+//                         mainAxisAlignment: MainAxisAlignment.center,
+//                         children: <Widget>[
+//                           Container (
+//                             height: 60.0,
+//                             padding: EdgeInsets.all(0.0),
+//                             margin: EdgeInsets.only(bottom: 20.0),
+//                             child: ListTile(
+//                               title: Text("Paiement", 
+//                                 style: TextStyle(
+//                                   color: Colors.blue, 
+//                                   fontWeight: FontWeight.w600,
+
+//                                 ),
+//                                 ),
+//                               subtitle: Text("Paiement total des élèves"),
+//                               trailing: Text(
+//                                 "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+//                                 style: TextStyle(
+//                                   color: Colors.red,
+//                                 ),
+//                               ),
+//                               onTap: () {
+//                                 Navigator.push(
+//                                   context, 
+//                                   MaterialPageRoute(
+//                                     builder: (context) => StudentPayment()
+
+//                                   )
+//                                 );
+//                               },
+//                             ),
+//                           ),
+
+//                         Container(
+//                           margin: EdgeInsets.only(bottom: 20.0),
+//                           child: ListTile(
+//                             title: Text(
+//                               '${_voir.studentpayment}',
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.w300,
+//                                 fontSize: 40.0,
+//                                 color: Colors.black38,
+//                               ),
+//                             ),
+//                             trailing: Icon(Icons.more_vert),
+//                           ),
+//                         )
+//                         ],
+//                       )
+//                     ),
+//                   );
+//                 } 
+//                 return Container(
+//                   height: 170.0,
+//                   child:  Card(
+//                     elevation: 1.0,
+//                     color: Colors.white,
+//                       child: Column (
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       children: <Widget>[
+//                         Container (
+//                           height: 60.0,
+//                           padding: EdgeInsets.all(0.0),
+//                           margin: EdgeInsets.only(bottom: 20.0),
+//                           child: ListTile(
+//                             title: Text("Paiement", 
+//                               style: TextStyle(
+//                                 color: Colors.blue, 
+//                                 fontWeight: FontWeight.w600,
+//                               ),
+//                               ),
+//                             subtitle: Text("Paiement total des élèves"),
+//                             trailing: Text(
+//                               "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+//                               style: TextStyle(
+//                                 color: Colors.red,
+//                               ),
+//                             ),
+//                           ),
+//                         ),
+
+//                       Container(
+//                           margin: EdgeInsets.only(bottom: 20.0),
+//                           child: ListTile(
+//                             title: Text(
+//                               'Aucaune operation!',
+//                               style: TextStyle(
+//                                 fontWeight: FontWeight.w300,
+//                                 fontSize: 20.0,
+//                                 color: Colors.black38,
+//                               ),
+//                             ),
+//                             trailing: Icon(Icons.more_vert),
+
+//                             onTap: () {
+//                                 Navigator.push(
+//                                   context, 
+//                                   MaterialPageRoute(
+//                                     builder: (context) => StudentPayment()
+
+//                                   )
+//                                 );
+//                               },
+//                           ),
+//                         )
+//                       ],
+//                     )
+//                   ),
+//                 );
+//             });
+//         }
+//         return CircularProgressIndicator(backgroundColor: Colors.transparent,);
+//       },
+//     );
+//   }
+
+
+
+
+
+?????????????????????????????????????????????????????????????????????????????
+
+
+
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:nankim_s/screens/finance/caisse_page/expenses.dart';
+import 'package:nankim_s/screens/finance/caisse_page/sold.dart';
+import 'package:nankim_s/screens/finance/fiche_paie_page/employeeinfo.dart';
+// import 'package:nankim_s/screens/finance/entrecaissepage.dart';
+// import 'package:nankim_s/screens/finance/fichepaiepage.dart';
+import 'package:nankim_s/screens/finance/paiement_page/suiviepayment.dart';
+// import 'package:nankim_s/screens/finance/livrecaissepage.dart';
+// import 'package:nankim_s/screens/finance/paiementpage.dart';
+// import 'package:nankim_s/screens/finance/soldecaissepage.dart';
+import 'package:nankim_s/screens/finance/caisse_page/payment.dart';
+import 'package:nankim_s/screens/finance/caisse_page/voirtout.dart';
+
+class FinanceHome extends StatefulWidget{
+  const FinanceHome({Key key}):super(key: key);
+
+  @override 
+  _FinanceHome createState() => _FinanceHome();
+}
+
+
+
+class _FinanceHome extends State<FinanceHome> with SingleTickerProviderStateMixin{
+  DateTime _datetime = DateTime.now();
+
+  ModuleDailyStudentPayment _voir;
+  ModuleDailySold _voirsold;
+  ModuleDailyExpenses _voirexpenses;
+  List<ModuleDailyStudentPayment> _moduleDailyStudentPayment;
+  // final  AccessRapportDailyCaisse _accessRapportDailyCaisse = AccessRapportDailyCaisse();
+
+  List<ModuleDailyExpenses> _moduleDailyExpense;
+  List<ModuleDailySold> _moduleDailySold;
+
+
+  @override 
+  void initState() {
+    super.initState();
+    _moduleDailyExpense = [];
+    _moduleDailyStudentPayment = [];
+    _moduleDailySold = [];
+    _getExpenses();
+    _getDailyStudentPayment();
+    _getProductSold();
+   
+  }
+
+
+
+  _getExpenses() {
+     getDailyExpenses().then((getamount) {
+      setState(() {
+        _moduleDailyExpense = getamount;
+      });
+    });
+  }
+
+  _getDailyStudentPayment() {
+    getDailyStudentPayment().then((getamount) {
+      setState(() {
+        _moduleDailyStudentPayment = getamount;
+      });
+    });
+  }
+
+  _getProductSold() {
+     getDailySold().then((getamount) {
+      setState(() {
+        _moduleDailySold = getamount;
+      });
+    });
+  }
+
+  
+
+  // ===================================================================================
+  // Widget productExpensesR() {
+  //   return FutureBuilder(
+  //     future: getDailyExpenses(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasData){
+  //           return ListView.builder(
+  //             itemCount: snapshot.data.length,
+  //             shrinkWrap: true,
+  //             itemBuilder: (BuildContext context, index){
+  //               _voirexpenses = snapshot.data[index];
+
+  //               return Row(
+  //                 children: <Widget>[
+  //                   Text("${_voirexpenses.expenses}")
+  //                 ],
+  //               );
+
+  //              },
+  //             );
+  //       }
+
+  //       return Center(child: CircularProgressIndicator());
+        
+  //     },
+  //   );
+  // }
+
+
+  // Widget studentPayment() {
+  //   return FutureBuilder(
+  //     future: getDailyStudentPayment(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasData){
+  //           return ListView.builder(
+  //             itemCount: snapshot.data.length,
+  //             shrinkWrap: true,
+  //             itemBuilder: (BuildContext context, index){
+  //               _voir = snapshot.data[index];
+
+  //               return Row(
+  //                 children: <Widget>[
+  //                   Text("${_voir.studentpayment}")
+  //                 ],
+  //               );
+
+  //              },
+  //             );
+  //       }
+
+  //       return Center(child: CircularProgressIndicator());
+        
+  //     },
+  //   );
+  // }
+
+
+  // Widget productSoldR() {
+  //   return FutureBuilder(
+  //     future: getDailySold(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.hasData){
+  //           return ListView.builder(
+  //             itemCount: snapshot.data.length,
+  //             shrinkWrap: true,
+  //             itemBuilder: (BuildContext context, index){
+  //               _voirsold = snapshot.data[index];
+
+  //               return Row(
+  //                 children: <Widget>[
+  //                   Text("${_voirsold.productsold}")
+  //                 ],
+  //               );
+
+  //              },
+  //             );
+  //       }
+
+  //       return Center(child: CircularProgressIndicator());
+        
+  //     },
+  //   );
+  // }
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Widget studentPayment() {
+    return FutureBuilder(
+      future: getDailyStudentPayment(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            // itemCount: snapshot.data.length,
+            itemCount: 1,
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, index) {
+                _voir = snapshot.data[index];
+                if(_voir.studentpayment != 'null'){
+                  return Container(
+                    height: 170.0,
+                    child:  Card(
+                      elevation: 1.0,
+                      color: Colors.white,
+                        child: Column (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container (
+                            height: 60.0,
+                            padding: EdgeInsets.all(0.0),
+                            margin: EdgeInsets.only(bottom: 20.0),
+                            child: ListTile(
+                              title: Text("Paiement", 
+                                style: TextStyle(
+                                  color: Colors.blue, 
+                                  fontWeight: FontWeight.w600,
+
+                                ),
+                                ),
+                              subtitle: Text("Paiement total des élèves"),
+                              trailing: Text(
+                                "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text(
+                              '${_voir.studentpayment}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 40.0,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            trailing: Icon(Icons.more_vert),
+
+                            onTap: () {
+                              Navigator.push(
+                                context, 
+                                MaterialPageRoute(
+                                  builder: (context) => StudentPayment()
+
+                                )
+                              );
+                            },
+                          ),
+                        )
+                        ],
+                      )
+                    ),
+                  );
+                } 
+                return Container(
+                  height: 170.0,
+                  child:  Card(
+                    elevation: 1.0,
+                    color: Colors.white,
+                      child: Column (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container (
+                          height: 60.0,
+                          padding: EdgeInsets.all(0.0),
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text("Paiement", 
+                              style: TextStyle(
+                                color: Colors.blue, 
+                                fontWeight: FontWeight.w600,
+                              ),
+                              ),
+                            subtitle: Text("Paiement total des élèves"),
+                            trailing: Text(
+                              "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                      Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text(
+                              'Aucaune operation!',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 20.0,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            trailing: Icon(Icons.more_vert),
+
+                            onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => StudentPayment()
+
+                                  )
+                                );
+                              },
+                          ),
+                        )
+                      ],
+                    )
+                  ),
+                );
+            });
+        }
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+  
+
+
+// =======================================PRODUCT SOLD ======================================================
+
+  Widget productSold() {
+    return FutureBuilder(
+      future: getDailySold(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: 1,
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, index) {
+                _voirsold = snapshot.data[index];
+                if(_voirsold.productsold != 'null'){
+                  return Container(
+                    height: 170.0,
+                    child:  Card(
+                      elevation: 1.0,
+                      color: Colors.white,
+                        child: Column (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container (
+                            height: 60.0,
+                            padding: EdgeInsets.all(0.0),
+                            margin: EdgeInsets.only(bottom: 20.0),
+                            child: ListTile(
+                              title: Text("Vente", 
+                                style: TextStyle(
+                                  color: Colors.blue, 
+                                  fontWeight: FontWeight.w600,
+
+                                ),
+                                ),
+                              subtitle: Text("Ventes du jour"),
+                              trailing: Text(
+                                "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                         Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text(
+                              '${_voirsold.productsold}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 40.0,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            trailing: Icon(Icons.more_vert),
+
+                            onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => RapSold()
+
+                                  )
+                                );
+                              },
+                          ),
+                        )
+                        ],
+                      )
+                    ),
+                  );
+                } 
+                return Container(
+                  height: 170.0,
+                  child:  Card(
+                    elevation: 1.0,
+                    color: Colors.white,
+                      child: Column (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container (
+                          height: 60.0,
+                          padding: EdgeInsets.all(0.0),
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text("Ventes", 
+                              style: TextStyle(
+                                color: Colors.blue, 
+                                fontWeight: FontWeight.w600,
+                              ),
+                              ),
+                            subtitle: Text("Ventes du jour"),
+                            trailing: Text(
+                              "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                            onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => RapSold()
+
+                                  )
+                                );
+                              },
+                          ),
+                        ),
+
+                       Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text(
+                              'Aucaune operation!',
+                              // _voir.error,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 20.0,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            trailing: Icon(Icons.more_vert),
+
+                            onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => RapSold()
+
+                                  )
+                                );
+                              },
+                          ),
+                        )
+                      ],
+                    )
+                  ),
+                );
+            });
+        }
+        return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+
+  // // ============================================================================================
+
+  Widget expenses() {
+              // print("${_voirexpenses.expenses}, ========================")
+    return FutureBuilder(
+      future: getDailyExpenses(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ListView.builder(
+            itemCount: 1,
+            shrinkWrap: true,
+            itemBuilder: (BuildContext context, index) {
+                _voirexpenses = snapshot.data[index];
+                if(_voirexpenses.expenses != 'null'){
+                  return Container(
+                    height: 170.0,
+                    child:  Card(
+                      elevation: 1.0,
+                      color: Colors.white,
+                        child: Column (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Container (
+                            height: 60.0,
+                            padding: EdgeInsets.all(0.0),
+                            margin: EdgeInsets.only(bottom: 20.0),
+                            child: ListTile(
+                              title: Text("Vente", 
+                                style: TextStyle(
+                                  color: Colors.blue, 
+                                  fontWeight: FontWeight.w600,
+
+                                ),
+                                ),
+                              subtitle: Text("Ventes du jour"),
+                              trailing: Text(
+                                "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+                                style: TextStyle(
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                         Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text(
+                              '${_voirexpenses.expenses}',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 40.0,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            trailing: Icon(Icons.more_vert),
+
+                             onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => RapExpenses()
+
+                                  )
+                                );
+                              },
+                          ),
+                        )
+                        ],
+                      )
+                    ),
+                  );
+                } 
+                return Container(
+                  height: 170.0,
+                  child:  Card(
+                    elevation: 1.0,
+                    color: Colors.white,
+                      child: Column (
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container (
+                          height: 60.0,
+                          padding: EdgeInsets.all(0.0),
+                          margin: EdgeInsets.only(bottom: 20.0),
+
+                          child: ListTile(
+                            title: Text("Ventes", 
+                              style: TextStyle(
+                                color: Colors.blue, 
+                                fontWeight: FontWeight.w600,
+                              ),
+                              ),
+                            subtitle: Text("Ventes du jour"),
+                            trailing: Text(
+                              "${_datetime.year}-${_datetime.month}-${_datetime.day}",
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                            onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => RapExpenses()
+
+                                  )
+                                );
+                              },
+                          ),
+                        ),
+
+                       Container(
+                          margin: EdgeInsets.only(bottom: 20.0),
+                          child: ListTile(
+                            title: Text(
+                              'Aucaune operation!',
+                              // _voir.error,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 20.0,
+                                color: Colors.black38,
+                              ),
+                            ),
+                            trailing: Icon(Icons.more_vert),
+
+                            onTap: () {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => RapExpenses()
+
+                                  )
+                                );
+                              },
+                          ),
+                        )
+                      ],
+                    )
+                  ),
+                );
+
+            });
+        }
+          
+         return Center(child: CircularProgressIndicator());
+      },
+    );
+  }
+  
+
+// ==================================================================================
+// ===================================================================================
+ 
+
+  @override 
+  Widget build(BuildContext context) {
+    final double _height = MediaQuery.of(context).size.height;
+    return Scaffold ( 
+      appBar: AppBar(
+        title: Text('Activites'), 
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.refresh), 
+            onPressed: () {
+              _getDailyStudentPayment();
+              _getExpenses();
+              _getProductSold();
+            }
+            )
+        ],
+      ),
+
+      drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                padding: EdgeInsets.zero,
+                child: Icon(
+                  Icons.account_balance,
+                  size: 128.0,
+                  color: Colors.white54,
+                ),
+                decoration: BoxDecoration(color: Colors.blue),
+              ),
+              
+              Column(
+                children: <Widget>[
+                  ListTile(
+                    leading: Icon(Icons.book),
+                    title: Text('Livre de caisse'),
+                    onTap: (){
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => RapportCaisse(),
+                        )
+                      );
+                    },
+                  ),
+
+                  // ListTile(
+                  //   leading: Icon(Icons.payment),
+                  //   title: Text('Fiche de paie'),
+                  //   onTap: (){
+                  //     Navigator.push(
+                  //       context, 
+                  //       MaterialPageRoute(
+                  //         builder: (context) => FichePaie(),
+                  //       )
+                  //     );
+                  //   },
+                  // ),
+
+                  ListTile(
+                    leading: Icon(Icons.monetization_on),
+                    title: Text('Suivie'),
+                    onTap: (){
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => CheckPayment(),
+                        )
+                      );
+                    },
+                  ),
+
+                  ListTile(
+                    leading: Icon(Icons.person_outline),
+                    title: Text('Employees'),
+                    onTap: (){
+                      Navigator.push(
+                        context, 
+                        MaterialPageRoute(
+                          builder: (context) => EmployeeInfo(),
+                        )
+                      );
+                    },
+                  ),
+
+                  Divider(),
+
+                  ListTile(
+                    leading: Icon(Icons.settings),
+                    title: Text('Paramettre'),
+                    onTap: (){},
+                  ),
+
+                  ListTile(
+                    leading: Icon(Icons.info),
+                    title: Text('info'),
+                    onTap: (){},
+                  ),
+
+                  ListTile(
+                    leading: Icon(Icons.arrow_left),
+                    title: Text('Deconnection'),
+                    onTap: (){},
+                  ),
+                ],
+              )
+              
+            ],
+          ),
+        ),
+        // ======================================================
+        // Daily Activities 
+        // ======================================================
+
+        body: SafeArea(
+          child: Container(
+            height: _height,
+            child: ListView(
+              scrollDirection: Axis.vertical,
+              children: <Widget>[
+                studentPayment(),
+                productSold(),
+                expenses(),
+              ],
+            )
+          )
+        )
+    );
+  }         
+}
+
+
+// Retrive Stydentpayment
+class ModuleDailyStudentPayment {
+  String studentpayment;
+
+  ModuleDailyStudentPayment({this.studentpayment});
+
+  factory ModuleDailyStudentPayment.fromJson(Map<String, dynamic> json) {
+    return ModuleDailyStudentPayment(studentpayment: json['studentpayment'].toString(),);
+  }
+  Map<String, dynamic> toMap() => {"studentpayment": studentpayment, };
+}
+
+// Retrieve Sold product
+class ModuleDailySold {
+  String productsold;
+  ModuleDailySold({this.productsold});
+  factory ModuleDailySold.fromJson(Map<String, dynamic> json) {
+    return ModuleDailySold(productsold: json["productsold"].toString());
+  }
+  Map<String, dynamic> toMap() => {"productsold": productsold};
+}
+
+// Retreive expensens 
+class ModuleDailyExpenses {
+
+  String expenses;
+
+  ModuleDailyExpenses({this.expenses});
+
+  factory ModuleDailyExpenses.fromJson(Map<String, dynamic> json) {
+    return ModuleDailyExpenses(expenses: json['expenses'].toString());
+  }
+
+  Map<String, dynamic> toMap() => {"expenses": expenses, };
+}
+
+List<ModuleDailyStudentPayment> moduleDailyStudentPaymentFromJson(String str) => 
+    List<ModuleDailyStudentPayment>.from(json.decode(str).map((x) => 
+    ModuleDailyStudentPayment.fromJson((x))));
+
+
+List<ModuleDailySold> moduleSoldFromJson(String str) => 
+  List<ModuleDailySold>.from(json.decode(str).map((x) =>
+  ModuleDailySold.fromJson((x))));
+
+List<ModuleDailyExpenses> moduleExpensesFromJson(String str) => 
+  List<ModuleDailyExpenses>.from(json.decode(str).map((x) => 
+  ModuleDailyExpenses.fromJson((x))));
+
+
+
+
+  Future<List<ModuleDailyStudentPayment>> getDailyStudentPayment() async {
+    String url = "http://10.0.2.2:8000/shule/api/std_py_result/";
+    final response = await http.get(url);
+    return moduleDailyStudentPaymentFromJson(response.body);
+  }
+
+  Future<List<ModuleDailySold>> getDailySold()  async {
+    String url = "http://10.0.2.2:8000/shule/api/sld_result/";
+    final response =  await http.get(url);
+    return moduleSoldFromJson(response.body);
+  }
+
+  Future<List<ModuleDailyExpenses>> getDailyExpenses() async {
+    String url= "http://10.0.2.2:8000/shule/api/exp_result/";
+    final response = await http.get(url);
+    return moduleExpensesFromJson(response.body);
+  }
+
+
+
+
+
+
+
+
+
+
+
+
